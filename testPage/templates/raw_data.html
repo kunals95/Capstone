@@ -15,14 +15,6 @@
   <!-- CSS Files -->
   <link href="{{url_for('.static', filename='assets/css/ks.css') }}" rel="stylesheet" />
   <link href="{{url_for('.static', filename='assets/css/material-kit.css') }}" rel="stylesheet" />
-  <style>
-    select {
-      width: 100%;
-      padding: 5px 15px;
-      border: none;
-      background-color: #f1f1f1;
-  }
-  </style>
 </head>
 <!-- Page -->
 <body class="index-page sidebar-collapse">
@@ -53,7 +45,7 @@
                 <i class="material-icons">library_books</i> Findings
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
-              href="../raw-data" data-original-title="Download raw datasets">
+              href="" data-original-title="Download raw datasets">
                 <i class="material-icons">get_app</i> Raw Data
               </a>
             </div>
@@ -64,7 +56,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="" data-original-title="Find your Doctor" >
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="../search" data-original-title="Find your Doctor" >
               <i class="material-icons">search</i> Search Doctors
             </a>
           </li>
@@ -106,7 +98,7 @@
         <div class="col-md-8 ml-auto mr-auto">
           <div class="brand" style="background-color:rgba(0,0,0,0.52);min-height: 100px">
               <p>&nbsp;</p>
-              <p class="h2-heading"style="color:White;font-size:24px"><i>See how much your doctor got paid</i></p>
+              <p class="h2-heading"style="color:White;font-size:24px"><i>Download Raw Datasets</i></p>
           </div>
         </div>
       </div>
@@ -117,52 +109,25 @@
     <div class="section section-basic">
       <div class="container">
         <div class="title">
-          <h2>Doctor Search</h2>
+          <h2>Raw Data</h2>
+          <h5>Below you will find the >30 GB of raw datasets I utilized for my analysis.</h5>
         </div>
-        <!-- Search Form -->
-        <form action="{{ url_for('results')}}"method="POST">
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <label for="inputfn"><font color=#505050><b>First Name</b></font></label>
-              <input name="fn" type="text" class="form-control" id="inputfn" placeholder="Ex: Lowell">
-              <!--
-              <small id="fnoptional" class="form-text text-muted">Optional</small>
-            -->
-            </div>
-            <div class="form-group col-md-6">
-              <label for="inputln"><font color=#505050><b>Last Name</b></font></label>
-              <input name="ln" type="text" class="form-control" id="inputln" placeholder="Ex: Kabnick" required>
-              <small id="lnrequired" class="form-text text-muted"><font color=#f44336><em>Required</em></font></small>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <label for="inputcity"><font color=#505050><b>City</b></font></label>
-              <input name="city" type="text" class="form-control" id="inputcity" placeholder="Ex: Morristown">
-              <!--
-              <small id="cityoptional" class="form-text text-muted">Optional</small>
-            -->
-            </div>
-            <div class="form-group col-md-6">
-              <label for="inputzip"><font color=#505050><b>Zip Code</b></font></label>
-              <input name="zip" type="text" class="form-control" id="inputzip" placeholder="Ex: 07960">
-              <small id="number" class="form-text text-muted">5 Digit Zip Code</small>
-              <!--
-              <small id="zipoptional" class="form-text text-muted">Optional</small>
-            -->
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="inputstate"><font color=#505050><b>State</b></font></label>
-            <select name="state" id="inputstate" class="form-control" required>
-              <option value="">State</option>
-              <option value="NJ">New Jersey</option>
-              <option disabled>More States Coming Soon!</option>
-            </select>
-            <small id="staterequired" class="form-text text-muted"><font color=#f44336><em>Required</em></font></small>
-          </div>
-          <button type="submitsearch" class="btn btn-primary">Search</button>
-        </form>
+        <div>
+          <p><u><h4><b><a href="https://www.cms.gov/OpenPayments/Explore-the-Data/Dataset-Downloads.html" target="_blank">Open Payments</a></b></h4></u></p>
+          <p class="text-muted"><b>4 datasets</b> (1 per year) - Disclose the payments healthcare providers received by pharmaceutical companies & device manufacturers for gifts, travel, meals, licensing, research, etc.</p>
+        </div>
+        <div>
+          <p><u><h4><b><a href="https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/Medicare-Provider-Charge-Data/Part-D-Prescriber.html" target="_blank">Medicare Part D Prescriber Data</a></b></h4></u></p>
+          <p class="text-muted"><b>4 datasets</b> (1 per year) - Outline the prescription drugs prescribed by healthcare providers that were paid for under the Medicare Part D Prescription Drug Program.</p>
+        </div>
+        <div>
+          <p><u><h4><b><a href="https://www.cms.gov/Regulations-and-Guidance/Administrative-Simplification/NationalProvIdentStand/DataDissemination.html" target="_blank">National Plan and Provider Enumeration System (NPPES)</a></b></h4></u></p>
+          <p class="text-muted"><b>1 dataset</b> - Contains all active National Provider Identifier (NPI) records.</p>
+        </div>
+        <div>
+          <p class="text-muted">
+            <br><small>All datasets were obtained through the United States Centers for Medicare & Medicaid Services website: cms.gov.</small></p>
+        </div>
       </div>
     </div>
   </div>

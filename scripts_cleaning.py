@@ -768,5 +768,9 @@ scriptsnjfull = scriptsnjfull[scriptsnjfull.columns.tolist()[:6]+scriptsnjfull.c
                             scriptsnjfull.columns.tolist()[-2:-1] + scriptsnjfull.columns.tolist()[6:7] + \
                             scriptsnjfull.columns.tolist()[7:8] + scriptsnjfull.columns.tolist()[-4:-3] + \
                             scriptsnjfull.columns.tolist()[9:-4]]
+#Renaming columns
+newcols={'nppes_provider_last_org_name':'ln',"nppes_provider_first_name":'fn','nppes_provider_city':'city', \
+        'nppes_provider_state':'state'}
+scriptsnjfull.rename(columns=newcols,inplace=True)
 #Saving this as a CSV for future use
 scriptsnjfull.to_csv('/Volumes/Seagate/Galvanize/nj_scripts_all_years.csv',index=False)

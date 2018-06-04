@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,7 +6,7 @@
   <link rel="icon" type="image/png" href="static/assets/img/doc.png">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>
-    Payments for Prescriptions?
+    Drug Money
   </title>
   <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
   <!--     Fonts and icons     -->
@@ -16,16 +15,15 @@
   <!-- CSS Files -->
   <link href="/static/assets/css/ks.css" rel="stylesheet" />
   <link href="/static/assets/css/material-kit.css" rel="stylesheet" />
-  <!-- CSS Just for demo purpose, don't include it in your project -->
-  <!-- <link href="static/assets/demo/demo.css" rel="stylesheet" /> -->
 </head>
-
+<!-- Page -->
 <body class="index-page sidebar-collapse">
+  <!-- Navigation Bar-->
   <nav class="navbar navbar-inverse navbar-expand-lg bg-dark fixed-top navbar-expand-lg" id="sectionsNav">
     <div class="container">
       <div class="navbar-translate">
-          <a class="navbar-brand" href="./">
-            <b> Payments for Prescriptions? </b> </a>
+          <a class="navbar-brand" href="">
+            <b> Drug Money </b> </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
           <span class="navbar-toggler-icon"></span>
@@ -35,17 +33,29 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
           <li class="dropdown nav-item">
-            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" title="" data-placement="bottom" data-original-title="Find your Doctor" >
-              <i class="material-icons">info</i> Analysis
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+              <i class="material-icons">functions</i> Analysis
             </a>
             <div class="dropdown-menu dropdown-with-icons">
-              <a href="INSERT TESTS HERE" class="dropdown-item">
-                <i class="material-icons">library_books</i> Hypothesis Tests
+              <a href="#" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
+                <i class="material-icons">bar_chart</i> Methodology
               </a>
-              <a href="https://github.com/kunals95/Capstone"  target="_blank" class="dropdown-item">
-                <i class="material-icons">code</i> Source Code
+              <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
+              href="./findings" data-original-title="">
+                <i class="material-icons">library_books</i> Findings
+              </a>
+              <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
+              href="./raw-data" data-original-title="Download raw datasets">
+                <i class="material-icons">get_app</i> Raw Data
               </a>
             </div>
+          </li>
+          <li class="nav-item">
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
+              <i class="material-icons">code</i> Source code
+            </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="./search" data-original-title="Find your Doctor" >
@@ -53,7 +63,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95" target="_blank" data-original-title="Explore my GitHub" >
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95" target="_blank" data-original-title="Explore my other projects">
               <i class="fa fa-github"></i>
             </a>
           </li>
@@ -71,19 +81,21 @@
       </div>
     </div>
   </nav>
+  <!-- Header -->
   <div class="page-header header-filter clear-filter" data-parallax="true" style="background-image: url('static/assets/img/money-blur.jpg');">
     <div class="container">
       <div class="row">
         <div class="col-md-8 ml-auto mr-auto">
-          <div class="brand" style="background-color:rgba(0,0,0,0.45);">
-            <p class="h1-heading"style="color:White;font-size:90px">Payments for Prescriptions?</p>
-            <p class="h2-heading"style="color:White;font-size:18px"><i>An Analysis by Kunal Shah</i></p>
+          <div class="brand" style="background-color:rgba(0,0,0,0.52);">
+            <p class="h1-heading"style="color:White;font-size:70px">Drug Money<!-- or call this Drug Money --></p>
+            <p class="h2-heading"style="color:White;font-size:18px"><i>How the corporate payments doctors recieve influence the prescriptions they write<br><br><font color="White">An Analysis by Kunal Shah</font></i></p>
             <p>&nbsp;</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- Body -->
   <div class="main main-raised">
     <div class="section section-basic">
       <div class="container">
@@ -1410,36 +1422,16 @@
   <!--  End Modal -->
   <footer class="footer" data-background-color="black">
     <div class="container">
-      <nav class="float-left">
+      <div class="copyright float-right">
         <ul>
           <li>
-            <a href="https://www.creative-tim.com">
-              Creative Tim
-            </a>
-          </li>
-          <li>
-            <a href="https://presentation.creative-tim.com">
-              About Us
-            </a>
-          </li>
-          <li>
-            <a href="https://blog.creative-tim.com">
-              Blog
-            </a>
-          </li>
-          <li>
-            <a href="https://www.creative-tim.com/license">
-              Licenses
+            <a href="https://www.linkedin.com/in/kunal-s" target="_blank">
+              &copy; <script>
+                document.write(new Date().getFullYear())
+              </script>, Kunal Shah
             </a>
           </li>
         </ul>
-      </nav>
-      <div class="copyright float-right">
-        &copy;
-        <script>
-          document.write(new Date().getFullYear())
-        </script>, made with <i class="material-icons">favorite</i> by
-        <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a> for a better web.
       </div>
     </div>
   </footer>

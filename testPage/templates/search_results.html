@@ -24,13 +24,14 @@
   }
   </style>
 </head>
+
 <!-- Page -->
 <body class="index-page sidebar-collapse">
-  <!-- Navigation Bar-->
+  <!-- Navigation Bar -->
   <nav class="navbar navbar-inverse navbar-expand-lg bg-dark fixed-top navbar-expand-lg" id="sectionsNav">
     <div class="container">
       <div class="navbar-translate">
-          <a class="navbar-brand" href="../">
+          <a class="navbar-brand" href="../../">
             <b> Drug Money </b> </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -46,14 +47,14 @@
             </a>
             <div class="dropdown-menu dropdown-with-icons">
               <a href="#" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
-                <i class="material-icons">bar_chart</i> Methodology
+                <i class="material-icons">bar_chart</i> Methods
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
-              href="../findings" data-original-title="">
+              href="../../findings" data-original-title="">
                 <i class="material-icons">library_books</i> Findings
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
-              href="../raw-data" data-original-title="Download raw datasets">
+              href="../../raw-data" data-original-title="Download raw datasets">
                 <i class="material-icons">get_app</i> Raw Data
               </a>
             </div>
@@ -64,7 +65,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="" data-original-title="Find your Doctor" >
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="../" data-original-title="Find your Doctor">
               <i class="material-icons">search</i> Search Doctors
             </a>
           </li>
@@ -100,69 +101,19 @@
     </div>
   </nav>
   <!-- Header -->
-  <div class="subpage-header" data-parallax="true" style="background-image: url({{ url_for('static', filename='assets/img/money-blur.jpg') }});">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8 ml-auto mr-auto">
-          <div class="brand" style="background-color:rgba(0,0,0,0.52);min-height: 100px">
-              <p>&nbsp;</p>
-              <p class="h2-heading"style="color:White;font-size:24px"><i>See how much your doctor got paid</i></p>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="minimal-header" data-parallax="true" style="background-image: url({{ url_for('static', filename='assets/img/money-blur.jpg') }});">
   </div>
   <!-- Body -->
   <div class="main main-raised">
     <div class="section section-basic">
       <div class="container">
         <div class="title">
-          <h2>Doctor Search</h2>
+          <h2>Search Results</h2>
+          <div>
+          <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+          {{ output2|safe }}
+          </div>
         </div>
-        <!-- Search Form -->
-        <form action="{{ url_for('results')}}"method="POST">
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <label for="inputfn"><font color=#505050><b>First Name</b></font></label>
-              <input name="fn" type="text" class="form-control" id="inputfn" placeholder="Ex: Lowell">
-              <!--
-              <small id="fnoptional" class="form-text text-muted">Optional</small>
-            -->
-            </div>
-            <div class="form-group col-md-6">
-              <label for="inputln"><font color=#505050><b>Last Name</b></font></label>
-              <input name="ln" type="text" class="form-control" id="inputln" placeholder="Ex: Kabnick" required>
-              <small id="lnrequired" class="form-text text-muted"><font color=#f44336><em>Required</em></font></small>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <label for="inputcity"><font color=#505050><b>City</b></font></label>
-              <input name="city" type="text" class="form-control" id="inputcity" placeholder="Ex: Morristown">
-              <!--
-              <small id="cityoptional" class="form-text text-muted">Optional</small>
-            -->
-            </div>
-            <div class="form-group col-md-6">
-              <label for="inputzip"><font color=#505050><b>Zip Code</b></font></label>
-              <input name="zip" type="text" class="form-control" id="inputzip" placeholder="Ex: 07960">
-              <small id="number" class="form-text text-muted">5 Digit Zip Code</small>
-              <!--
-              <small id="zipoptional" class="form-text text-muted">Optional</small>
-            -->
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="inputstate"><font color=#505050><b>State</b></font></label>
-            <select name="state" id="inputstate" class="form-control" required>
-              <option value="">State</option>
-              <option value="NJ">New Jersey</option>
-              <option disabled>More States Coming Soon!</option>
-            </select>
-            <small id="staterequired" class="form-text text-muted"><font color=#f44336><em>Required</em></font></small>
-          </div>
-          <button type="submitsearch" class="btn btn-primary">Search</button>
-        </form>
       </div>
     </div>
   </div>
@@ -187,10 +138,6 @@
   <script src="{{url_for('.static', filename='assets/js/core/popper.min.js') }}" type="text/javascript"></script>
   <script src="{{url_for('.static', filename='assets/js/core/bootstrap-material-design.min.js') }}" type="text/javascript"></script>
   <script src="{{url_for('.static', filename='assets/js/plugins/moment.min.js') }}" type="text/javascript"></script>
-  <!--	Plugin for the Datepicker, full documentation here: https://github.com/Eonasdan/bootstrap-datetimepicker -->
-  <script src="{{url_for('.static', filename='assets/js/plugins/bootstrap-datetimepicker.js') }}" type="text/javascript"></script>
-  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-  <script src="{{url_for('.static', filename='assets/js/plugins/nouislider.min.js') }}" type="text/javascript"></script>
   <!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
   <script src="{{url_for('.static', filename='assets/js/material-kit.js') }}" type="text/javascript"></script>
 </body>
