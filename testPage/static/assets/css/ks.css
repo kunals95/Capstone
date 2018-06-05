@@ -53,3 +53,8 @@
   min-height: 300px;
   padding: 50px;
 }
+
+.space-20 {
+  height: 20px;
+  display: block;
+}

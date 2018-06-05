@@ -3317,8 +3317,8 @@ fieldset:disabled a.btn {
 .btn-lg,
 .btn-group-lg>.btn {
   padding: 1.125rem 2.25rem;
-  font-size: 1.25rem;
-  line-height: 1.5;
+  font-size: 1.75rem;
+  line-height: 1.75;
   border-radius: 0.3rem;
 }
 
@@ -10713,7 +10713,7 @@ fieldset[disabled][disabled] .btn-group-raised .btn,
 .btn-group-lg>.btn,
 .btn-group-lg .btn {
   padding: 1.125rem 2.25rem;
-  font-size: 0.875rem;
+  font-size: 1.5rem;
   line-height: 1.333333;
   border-radius: 0.2rem;
 }

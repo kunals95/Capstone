@@ -42,7 +42,7 @@ p13.replace('NAN', np.NaN,inplace=True)"""
 #I dropped this rn
 
 #Groupby the ID so we can shrink our df
-payids = p13.groupby(['id','fn','ln','mn','zip','specialty','address1']).count()['amount'].to_frame().reset_index(inplace=True)
+payids = p13.groupby(['id','fn','ln','mn','zip5','specialty','address1']).count()['amount'].to_frame().reset_index(inplace=True)
 #Dropping amount column because it's not necessary rn
 payids.drop('amount',axis=1,inplace=True)
 #Finding all the mispelled names/addresses/etc.
@@ -140,10 +140,7 @@ script_npi['zip5'] = script_npi['zip'].map(lambda x: x[:5])
 """Dealing with mismatched/mispelled names"""
 #This just lets me see names where the first name & last name don't match up
 script_npi.loc[(script_npi['ln_x']!=script_npi['ln_y']) & (script_npi['fn_x']!=script_npi['fn_y'])]
-#There's a really mismatched name here, (ABDELGHANI, WALEED) vs (SHOMAN, ADAM)
-#I looked it up and Adam is the right one so I'm going to change it manually
-script_npi.at[6940,'ln_x'] = 'SHOMAN'
-script_npi.at[6940,'fn_x'] = 'ADAM'
+#There's no mismatched names here
 #Making a new table of the mismatched names
 mis_name = script_npi.loc[(script_npi['ln_x']!=script_npi['ln_y']) | (script_npi['fn_x']!=script_npi['fn_y'])]
 #Saving these as CSVs for future use
@@ -527,7 +524,157 @@ combine_npi_payid(pay_id_15_dict, npi_15_dict)
 pickle.dump(npi_pay_dict, open('15_linked.pkl', 'wb'))
 
 
-"""Master dictionary of all NPIs & Payment ID links for 2013-2015
+
+
+"""2016 DATA"""
+
+"""Cleaning the Payments Data for joining & grabbing only the NJ data"""
+#Loading csv
+pay16 = pd.read_csv('/Volumes/Seagate/Galvanize/2016 Open Payments/OP_DTL_GNRL_PGYR2016_P01172018.csv', \
+                    usecols=['Physician_Profile_ID','Physician_First_Name','Physician_Middle_Name', \
+                             'Physician_Last_Name','Recipient_State','Total_Amount_of_Payment_USDollars', \
+                            'Recipient_Primary_Business_Street_Address_Line1', 'Physician_Specialty', 'Recipient_Zip_Code'], \
+                            dtype={'Recipient_Zip_Code':object})
+#Grabbing only the NJ practioners
+p16 = pay16[pay16['Recipient_State'].isin(['NJ'])]
+"""Saving as a CSV for future use"""
+p16.to_csv('/Volumes/Seagate/Galvanize/nj_payments_2016.csv')
+#Renaming the columns so they're easier to call
+l = p16.columns
+p16.rename(columns={l[0]:'id',l[1]:'fn',l[2]:'mn',l[3]:'ln',l[4]:'address1',l[5]:'state',l[6]:'zip',l[-2]:'specialty',l[-1]:'amount'},inplace=True)
+#Cleaning the first & last name (removing space & symbols) and the address (removing any symbols)
+p16['ln'] = p16['ln'].map(lambda x: str(x).replace(' ',''))
+p16['fn'] = p16['fn'].map(lambda x: str(x).replace(' ',''))
+p16['mn'] = p16['mn'].map(lambda x: str(x).replace(' ',''))
+p16['ln'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in p16['ln']]
+p16['fn'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in p16['fn']]
+p16['mn'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in p16['mn']]
+p16['address1'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in p16['address1']]
+#Cleaning the zip codes (removing dashes & making sure they are not missing the leading 0 that most NJ zip codes have)
+p16['zip'] = [x.replace('-','') for x in p16['zip']]
+p16['zip'] = [('0'+str(x)) if len(str(x))==8 or len(str(x))==4 else str(x) for x in p16['zip']]
+#Making a column for the 5 digit zip
+p16['zip5'] = p16['zip'].map(lambda x: x[:5])
+
+"""#Changing the NAN strings back to np.NaN (this happened while we were cleaning)
+p16.replace('NAN', np.NaN,inplace=True)"""
+#I dropped this rn
+
+#Groupby the ID so we can shrink our df
+payids = p16.groupby(['id','fn','ln','mn','zip','specialty','address1']).count()['amount'].to_frame().reset_index(inplace=True)
+#Dropping amount column because it's not necessary rn
+payids.drop('amount',axis=1,inplace=True)
+#Finding all the mispelled names/addresses/etc.
+mis = payids[payids['id'].isin(payids['id'][payids['id'].duplicated()])].sort_values("id")
+#Saving as a CSV for future use
+payids.to_csv('/Volumes/Seagate/Galvanize/nj_16_payment_ids.csv')
+mis.to_csv('/Volumes/Seagate/Galvanize/nj_16_multi_name_payment_ids.csv')
+
+
+"""Cleaning the Prescriptions Data for joining & grabbing only the NJ data"""
+#First I load only a small subset of the data to get an idea of the columns I'll need to use for joining
+prescrip16 = pd.read_csv('/Volumes/Seagate/Galvanize/Prescriptions 2016.csv', nrows=100)
+#This is so I can view all the columns since otherwise they get cut off
+prescrip16[:1].to_dict('index')
+#Then I pick only the columns I want & load the entire csv
+scripts16 = pd.read_csv('/Volumes/Seagate/Galvanize/Prescriptions 2016.csv',usecols=list(prescrip16.columns[:6]))
+#Grabbing only the NJ practioners
+scripts16nj = scripts16[scripts16['nppes_provider_state'].isin(['NJ'])]
+#Renaming the columns so they're easier to call
+l = scripts16nj.columns
+scripts16nj.rename(columns={l[0]:'npi',l[1]:'ln',l[2]:'fn',l[3]:'city',l[4]:'state',l[5]:'specialty'},inplace=True)
+#Upper casing the first name, last name, and city
+scripts16nj['ln'] = [x.upper() for x in scripts16nj['ln']]
+scripts16nj['fn'] = [str(x).upper() for x in scripts16nj['fn']]
+scripts16nj['city'] = [x.upper() for x in scripts16nj['city']]
+"""Saving as a csv for future use"""
+scripts16nj.to_csv('/Volumes/Seagate/Galvanize/2016_scriptsnj.csv')
+#Grouping so I don't have a bunch of duplicate NPIs & I can look for mispellings
+s16 = scripts16nj.groupby(['npi','ln','fn','city','specialty']).count()['state'].to_frame()
+#Resetting the index becuase all my groupbys are now the index, which wont work for a merge
+s16.reset_index(inplace=True)
+#Checking if any of the people's names are misspelled
+dup16 = s16[s16['npi'].isin(s16['npi'][s16['npi'].duplicated()])].sort_values("npi")
+    #There were none
+"""Combining with NPI df so I can remove all the organizations"""
+#Joining the Scripts & NPI
+"""Reasons for doing this:
+    1. To get the Middle name of the individual
+    2. To remove all organizations from the prescriptions data
+    3. To get the address & zip of the individual
+"""
+script_npi = s16.merge(npi_idv, left_on='npi',right_on='NPI')
+#Checking to make sure the ones not in the joined df are actually only organizations
+notjoined = npi_nj[npi_nj['NPI'].isin(list(s16[~s16.npi.isin(script_npi.NPI)]['npi']))]
+len(notjoined[notjoined['Entity Type Code'].isin([1.0])])
+    #1 = Indivduals, There were none
+#Dropping unecessary column & the NPI column because it's repeated
+script_npi.drop(['Entity Type Code','NPI','state_x','state_y'],axis=1,inplace=True)
+#Cleaning the joined dataframe, removing essentially all punctuation & spaces from the first or last name
+script_npi['ln_x'] = script_npi['ln_x'].map(lambda x: x.replace(' ',''))
+script_npi['ln_y'] = script_npi['ln_y'].map(lambda x: x.replace(' ',''))
+script_npi['fn_x'] = script_npi['fn_x'].map(lambda x: x.replace(' ',''))
+script_npi['fn_y'] = script_npi['fn_y'].map(lambda x: x.replace(' ',''))
+script_npi['mn'] = script_npi['mn'].map(lambda x: str(x).replace(' ',''))
+script_npi['ln_x'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in script_npi['ln_x']]
+script_npi['ln_y'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in script_npi['ln_y']]
+script_npi['fn_x'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in script_npi['fn_x']]
+script_npi['fn_y'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in script_npi['fn_y']]
+script_npi['mn'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in script_npi['mn']]
+script_npi['address1'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in script_npi['address1']]
+#Cleaning the zip codes, NJ has a leading 0 in the zip so it might of been dropped
+script_npi['zip'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in script_npi['zip']]
+script_npi['zip'] = [('0'+str(x)) if len(str(x))==8 or len(str(x))==4 else str(x) for x in script_npi['zip']]
+
+"""#Changing the NAN strings back to np.NaN (this happened while we were cleaning)
+script_npi.replace('NAN', np.NaN,inplace=True)"""
+#I dropped this rn
+
+#Making a column for the 5 digit zip
+script_npi['zip5'] = script_npi['zip'].map(lambda x: x[:5])
+"""Dealing with mismatched/mispelled names"""
+#This just lets me see names where the first name & last name don't match up
+script_npi.loc[(script_npi['ln_x']!=script_npi['ln_y']) & (script_npi['fn_x']!=script_npi['fn_y'])]
+#Making a new table of the mismatched names
+mis_name = script_npi.loc[(script_npi['ln_x']!=script_npi['ln_y']) | (script_npi['fn_x']!=script_npi['fn_y'])]
+#Saving these as CSVs for future use
+script_npi.to_csv('/Volumes/Seagate/Galvanize/nj_16_scrip_npi.csv')
+mis_name.to_csv('/Volumes/Seagate/Galvanize/nj_16_multi_name_npi.csv')
+
+
+"""Making 1 dictionary for each NPI & 1 dictionary for each Payment_ID
+Keys = NPI or Payment ID
+Values = Dictionary of:
+    Keys: first name(fn), last name(ln), 5 digit zip(zip5), address(address1), Physician Specialty (specialty)
+    Values: All the values that are listed in the NPI/Prescriptions or Payments data for that Key
+        This is due to misspellings, extra info (Ex: Road instead of Rd), etc.
+"""
+#Clearing the the Payment ID dictionary
+d = {}
+#Applying the function to our payment_ids
+payids.apply(payment_id,axis=1)
+#Pickling it so I can utilize it with ease later
+pickle.dump(d, open('16paydict.pkl', 'wb'))
+
+#Clearing the NPI dictioanry
+n = {}
+#Applying the function to our payment_ids
+script_npi.apply(script_npi_dict,axis=1)
+#Pickling it so I can utilize it with ease later
+pickle.dump(n, open('16npidict.pkl', 'wb'))
+#Just renaming the 2 dictionaries from above
+pay_id_16_dict = d
+npi_16_dict = n
+
+"""Combining the NPI & Payment_ID dictionaries to match them up"""
+npi_pay_dict = {}
+#Combining them using the function i created
+combine_npi_payid(pay_id_16_dict, npi_16_dict)
+#Pickling it so I can utilize it with ease later
+pickle.dump(npi_pay_dict, open('16_linked.pkl', 'wb'))
+
+
+"""Master dictionary of all NPIs & Payment ID links for 2013-2016
 Note, this does not include NPIs for individuals who are not apart
 of the Prescriptions database from that year
 Essentially if the indivudal didn't write a prescription for medicare for that year OR they didn't get a payment for that year = THEY ARE NOT INCLUDED"""
@@ -538,6 +685,9 @@ dif_13_14 = {k:v for k,v in npi_pay_dict_14.items() if k not in npi_pay_dict_13}
 npi_pay_dict_13_14 = {**npi_pay_dict_13, **dif_13_14}
 #Grabbing all the values that are in 2015, but NOT in 2013 or 2014
 dif_13_14_15 = {k:v for k,v in npi_pay_dict_15.items() if k not in npi_pay_dict_13_14}
-npi_pay_dict_all = {**npi_pay_dict_13_14, **dif_13_14_15}
+npi_pay_dict_13_14_15 = {**npi_pay_dict_13_14, **dif_13_14_15}
+#Grabbing all the values that are in 2016, but NOT in 2013, 2014 or 2015
+dif_13_14_15_16 = {k:v for k,v in npi_pay_dict_16.items() if k not in npi_pay_dict_13_14_15}
+npi_pay_dict_all = {**npi_pay_dict_13_14_15, **dif_13_14_15_16}
 #Pickling so I can easily use it later
 pickle.dump(npi_pay_dict_all, open('full_linked.pkl', 'wb'))

@@ -221,6 +221,7 @@ clean_drug_name(scriptsnj13,'SPS','SODIUM POLYSTYRENE SULFONATE')
 clean_drug_name(scriptsnj13,'SPIRONOLACTONE HCTZ','SPIRONOLACT HYDROCHLOROTHIAZID')
 clean_drug_name(scriptsnj13,'TETANUSHTHERIA TOXOIDS','TETANUS HTHERIA TOX ADULT')
 clean_drug_name(scriptsnj13,'TRIAMTERENE HCTZ','TRIAMTERENE HYDROCHLOROTHIAZID')
+clean_drug_name(scriptsnj13,'ALPRAZOLAM ODT','ALPRAZOLAM INTENSOL')
 
 #Now that the data is cleaned ... Making a new column to see if the drug prescibed is a generic or brand name
 scriptsnj13['brand_drug?'] = scriptsnj13['drug_name']!=scriptsnj13['generic_name']
@@ -442,6 +443,7 @@ clean_drug_name(scriptsnj14,'SPS','SODIUM POLYSTYRENE SULFONATE')
 clean_drug_name(scriptsnj14,'SPIRONOLACTONE HCTZ','SPIRONOLACT HYDROCHLOROTHIAZID')
 clean_drug_name(scriptsnj14,'TETANUSHTHERIA TOXOIDS','TETANUS HTHERIA TOX ADULT')
 clean_drug_name(scriptsnj14,'TRIAMTERENE HCTZ','TRIAMTERENE HYDROCHLOROTHIAZID')
+clean_drug_name(scriptsnj14,'ALPRAZOLAM ODT','ALPRAZOLAM INTENSOL')
 #New ones from 2014
 clean_drug_name(scriptsnj14,'RENAL CAPS','B COMPLEX C NO 20 FOLIC ACID')
 clean_drug_name(scriptsnj14,'BETAMETHASONE PROPYLENE GLYCOL','BETAMETHASONE PROPYLENE GLYC')
@@ -683,6 +685,7 @@ clean_drug_name(scriptsnj15,'SPS','SODIUM POLYSTYRENE SULFONATE')
 clean_drug_name(scriptsnj15,'SPIRONOLACTONE HCTZ','SPIRONOLACT HYDROCHLOROTHIAZID')
 clean_drug_name(scriptsnj15,'TETANUSHTHERIA TOXOIDS','TETANUS HTHERIA TOX ADULT')
 clean_drug_name(scriptsnj15,'TRIAMTERENE HCTZ','TRIAMTERENE HYDROCHLOROTHIAZID')
+clean_drug_name(scriptsnj15,'ALPRAZOLAM ODT','ALPRAZOLAM INTENSOL')
 #New ones from 2014
 clean_drug_name(scriptsnj15,'RENAL CAPS','B COMPLEX C NO 20 FOLIC ACID')
 clean_drug_name(scriptsnj15,'BETAMETHASONE PROPYLENE GLYCOL','BETAMETHASONE PROPYLENE GLYC')
@@ -760,8 +763,258 @@ scriptsnj15['recieved_payments'] = scriptsnj15['npi'].isin(paid_docs)
 #Saving the hardwork
 scriptsnj15.to_csv('/Volumes/Seagate/Galvanize/2015_scriptsnj.csv',index=False)
 
+
+
+"""2016 Prescriptions Cleaning"""
+
+"""First I load a small subset of the data to get an idea of the columns I'll need"""
+scripts16 = pd.read_csv('/Volumes/Seagate/Galvanize/Prescriptions 2016.csv', nrows=1)
+scripts16.info()
+#Grabbing only the columns I want
+scripts16 = pd.read_csv('/Volumes/Seagate/Galvanize/Prescriptions 2016.csv', usecols=cols)
+#Grabbing only the NJ docs
+scriptsnj16 = scripts16[scripts16['nppes_provider_state']=='NJ']
+#Loading in All Npis to remove organizations
+npi = pd.read_csv('/Volumes/Seagate/Galvanize/NPPES_Data_Dissemination_May_2018/npidata_pfile_20050523-20180513.csv', \
+                  usecols=['Entity Type Code','NPI','Provider Middle Name', \
+                           'Provider First Name','Provider Last Name (Legal Name)'])
+#Grabbing only the individuals from the npi database, so I can remove orgs from the dataframe
+npi = npi[npi['Entity Type Code'].isin([1.0])]
+scriptsnj16 = scriptsnj16.merge(npi, left_on='npi',right_on='NPI')
+#Dropping the added columns from the NPI
+scriptsnj16.drop(['NPI','Entity Type Code','Provider Last Name (Legal Name)','Provider First Name','Provider Middle Name'],axis=1,inplace=True)
+scriptsnj16.to_csv('/Volumes/Seagate/Galvanize/2016_scriptsnj.csv',index=False)
+#Cleaning up generic & drug names of symbols as this could cause mismatching of names (I'll replace symbols with a space)
+scriptsnj16['drug_name'] = [re.sub(r'[^\w\s]',' ',str(x).upper()) for x in scriptsnj16['drug_name']]
+scriptsnj16['generic_name'] = [re.sub(r'[^\w\s]',' ',str(x).upper()) for x in scriptsnj16['generic_name']]
+#Removing some common extras from the names of our drugs since I want to compare name brand vs generic, not go into specifc drugs
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: x.replace(' HCL', ''))
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: x.replace(' XL', ''))
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: x.replace(' ER', ''))
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: x.replace(' DIP', ''))
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: x.replace(' PF', ''))
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: x.replace(' XR', ''))
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: x.replace(' HBR', '  HYDROBROMIDE'))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: x.replace(' HCL', ''))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: x.replace(' XL', ''))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: x.replace(' ER', ''))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: x.replace(' DIP', ''))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: x.replace(' PF', ''))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: x.replace(' XR', ''))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: x.replace(' HBR', '  HYDROBROMIDE'))
+#I noticed some drug names & generic names weren't matching up due to the word 'with', even when a doc prescribed the generic
+#Also removes exra spaces
+scriptsnj16['drug_name'] = scriptsnj16['drug_name'].map(lambda x: ' '.join(str(x).replace(' WITH','').split()))
+scriptsnj16['generic_name'] = scriptsnj16['generic_name'].map(lambda x: ' '.join(str(x).replace(' WITH','').split()))
+#Some drug names that weren't match that I had to hard code in
+#I used the same functoin that I used for the 2013 data
+#How I was looking for some mismatched names
+scriptsnj16[scriptsnj16['drug_name']!=scriptsnj16['generic_name']].groupby(['generic_name','drug_name']).agg({'total_claim_count':'count'})
+#Making this a bit easier on myself & going through and looking at the columns where the drug names are in the generic name
+#This basically lets me see where a shorthand is being used & is not being linked as a generic, even when it is
+d1 = (scriptsnj16[([x[0] in x[1] for x in zip(scriptsnj16['drug_name'], scriptsnj16['generic_name'])])&(scriptsnj16['drug_name']!=scriptsnj16['generic_name'])].groupby(['generic_name','drug_name']).agg({'total_claim_count':'count'})).reset_index()
+#Dropping the columns where these are actually name brand drugs
+d1.drop(list(d1[d1['drug_name']=='CIPRO'].index.values),inplace=True)
+d1.drop(list(d1[d1['drug_name']=='DIGOX'].index.values),inplace=True)
+d1.drop(list(d1[d1['drug_name']=='DILT'].index.values),inplace=True)
+d1.drop(list(d1[d1['drug_name']=='ERY'].index.values),inplace=True)
+d1.drop(list(d1[d1['drug_name']=='FROVA'].index.values),inplace=True)
+d1.drop(list(d1[d1['drug_name']=='TOPROL'].index.values),inplace=True)
+d1.drop(list(d1[d1['drug_name']=='URSO'].index.values),inplace=True)
+d1.drop(list(d1[d1['generic_name']=='FENOFIBRATE MICRONIZED'].index.values),inplace=True)
+#Using a for loop to go through & fix the names
+for generic, drug in zip(list(d1['generic_name']),list(d1['drug_name'])):
+    clean_drug_name(scriptsnj16,generic,drug)
+#Doing the same for the opposite now
+d2 = (scriptsnj16[([x[0] in x[1] for x in zip(scriptsnj16['generic_name'], \
+                                              scriptsnj16['drug_name'])]) & \
+                  (scriptsnj16['drug_name']!=scriptsnj16['generic_name'])].groupby(['generic_name','drug_name']). \
+      agg({'total_claim_count':'count'})).reset_index()
+#Dropping the columns where these are actually name brand drugs
+d2.drop(list(d2[(d2['generic_name']=='PEN NEEDLE') & (d2['drug_name']!='PEN NEEDLES')].index.values),inplace=True)
+#Using a for loop to go through & fix the names
+for generic, drug in zip(list(d2['generic_name']),list(d2['drug_name'])):
+    clean_drug_name(scriptsnj16,generic,drug)
+#Checking where I have swapped for generics names Ex: PROBENECID COLCHICINE != COLCHICINE PROBENECID
+d3 = (scriptsnj16[([sorted(x[0].split(' ')) == sorted(x[1].split(' ')) for x in zip(scriptsnj16['generic_name'], \
+                                                                    scriptsnj16['drug_name'])]) & \
+                  (scriptsnj16['drug_name']!=scriptsnj16['generic_name'])]).groupby(['generic_name','drug_name']). \
+agg({'total_claim_count':'count'}).reset_index()
+#Dropping the columns where these are actually name brand drugs
+for generic, drug in zip(list(d3['generic_name']),list(d3['drug_name'])):
+    clean_drug_name(scriptsnj16,generic,drug)
+#There's a special case where insulin syringe falls under 2 generic names (insulin syringe and syring w ndl ...)
+(scriptsnj16[scriptsnj16['drug_name']=='INSULIN SYRINGE']).groupby(['generic_name','drug_name']). \
+agg({'total_claim_count':'sum'})
+#I'm just going to set all insulin syringe (drug) = insulin syringe (generic) becuase I only care about if the drug prescribed is a generic or not
+#I don't care if it is a sep drug or not
+for i in (scriptsnj16[scriptsnj16['drug_name']=='INSULIN SYRINGE']).index.values:
+    scriptsnj16.at[i,'generic_name'] = 'INSULIN SYRINGE'
+
+"""Hopefully this gives you an idea of how messy some data is :)"""
+#Same ones from 2013, just incase
+clean_drug_name(scriptsnj16,'DORZOLAMIDE TIMOLOL MALEAT','DORZOLAMIDE TIMOLOL')
+clean_drug_name(scriptsnj16,'CEFUROXIME AXETIL','CEFUROXIME')
+clean_drug_name(scriptsnj16,'CLOPIDOGREL BISULFATE','CLOPIDOGREL')
+#   Still the same generic for my purposes of brand name v generic
+clean_drug_name(scriptsnj16,'DEXTROSE 70 IN WATER','DEXTROSE IN WATER')
+clean_drug_name(scriptsnj16,'DEXTROSE 5 IN WATER','DEXTROSE IN WATER')
+#   Still the same generic for my purposes of brand name v generic
+clean_drug_name(scriptsnj16,'SYRING W NDL DISP INSUL 0 3ML','INSULIN SYRINGE')
+clean_drug_name(scriptsnj16,'SYRING W NDL DISP INSUL,0 5ML','INSULIN SYRINGE')
+clean_drug_name(scriptsnj16,'SYRINGE NEEDLE INSULIN 1 ML', 'INSULIN SYRINGE')
+clean_drug_name(scriptsnj16,'SYR W NDL INS 0 3 ML HALF MARK',"INSULIN SYRINGE")
+#   NITROFURANTOIN MONO MACRO is also known as NITROFURANTOIN MONOHYD M CRYST, both are the same generic
+clean_drug_name(scriptsnj16,'NITROFURANTOIN MONO MACRO','NITROFURANTOIN')
+clean_drug_name(scriptsnj16,'NITROFURANTOIN MONOHYD M CRYST,','NITROFURANTOIN')
+clean_drug_name(scriptsnj16,'NITROFURANTOIN MACROCRYSTAL','NITROFURANTOIN')
+#   Generic that got cut off
+clean_drug_name(scriptsnj16,'ACETIC ACID ALUMINUM','ACETIC ACID ALUMINUM ACETATE')
+clean_drug_name(scriptsnj16,'ALCOHOL ANTISEPTIC PADS','ALCOHOL PADS')
+clean_drug_name(scriptsnj16,'ALCOHOL PREP PADS','ALCOHOL PADS')
+clean_drug_name(scriptsnj16,'ALCOHOL SWAB','ALCOHOL PADS')
+clean_drug_name(scriptsnj16,'ALCOHOL SWABS','ALCOHOL PADS')
+clean_drug_name(scriptsnj16,'ALCOHOL WIPES','ALCOHOL PADS')
+clean_drug_name(scriptsnj16,'SINGLE USE SWAB','ALCOHOL PADS')
+clean_drug_name(scriptsnj16,'YF VAX','YELLOW FEVER VACCINE LIVE')
+clean_drug_name(scriptsnj16,'0 9 SODIUM CHLORIDE','SODIUM CHLORIDE IRRIG SOLUTION')
+clean_drug_name(scriptsnj16,'SODIUM CHLORIDE 0 45','SODIUM CHLORIDE IRRIG SOLUTION')
+clean_drug_name(scriptsnj16,'ABACAVIR','ABACAVIR SULFATE')
+clean_drug_name(scriptsnj16,'ABATACEPT MALTOSE','ABATACEPT')
+clean_drug_name(scriptsnj16,'TYLENOL CODEINE NO 3','TYLENOL CODEINE')
+clean_drug_name(scriptsnj16,'TYLENOL CODEINE NO 4','TYLENOL CODEINE')
+clean_drug_name(scriptsnj16,'ACETIC ACID HYDROCORTISONE','HYDROCORTISONE ACETIC ACID')
+clean_drug_name(scriptsnj16,'WATER FOR IRRIGATION STERILE','WATER')
+clean_drug_name(scriptsnj16,'VERAPAMIL PM','VERAPAMIL')
+clean_drug_name(scriptsnj16,'CHLORDIAZEPOXIDE AMITRIPTYLINE', 'AMITRIP CHLORDIAZEPOXIDE')
+clean_drug_name(scriptsnj16,'AMOXICILLIN POTASSIUM CLAV','AMOXICILLIN CLAVULANATE')
+clean_drug_name(scriptsnj16,'AMOX TR POTASSIUM CLAVULANATE','AMOXICILLIN CLAVULANATE')
+clean_drug_name(scriptsnj16,'AMPICILLIN SODIUM SULBACTAM NA','AMPICILLIN SULBACTAM')
+clean_drug_name(scriptsnj16,'ATROPINE CARE','ATROPINE SULFATE')
+clean_drug_name(scriptsnj16,'AZACTAM ISO OSMOTIC DEXTROSE','AZTREONAM DEXTROSE WATER')
+clean_drug_name(scriptsnj16,'BETAMETHASONEROPIONATE','BETAMETHASONE PROPYLENE GLYCOL')
+clean_drug_name(scriptsnj16,'BUTALBITAL ACETAMINOPHEN CAFFE','BUTALBITAL ACETAMINOPHEN CAFFEINE')
+clean_drug_name(scriptsnj16,'BUTALB ACETAMINOPHEN CAFFEINE','BUTALBITAL ACETAMINOPHEN CAFFEINE')
+clean_drug_name(scriptsnj16,'ATROPINE CARE','ATROPINE SULFATE')
+clean_drug_name(scriptsnj16,'BISOPROLOL HYDROCHLOROTHIAZIDE','BISOPROLOL FUMARATE HCTZ')
+clean_drug_name(scriptsnj16,'BUTALB CAFF ACETAMINOPH CODEIN','BUTALBIT ACETAMIN CAFF CODEIN')
+clean_drug_name(scriptsnj16,'CALCIUM FOLIC ACID PLUS D','CAL CARB MGOX D3 B12 FA B6 BOR')
+clean_drug_name(scriptsnj16,'CIPROFLOXACIN LACTATE D5W','CIPROFLOXACIN D5W')
+clean_drug_name(scriptsnj16,'CITALOPRAM HYDROBROMIDE','CITALOPRAM HBR')
+clean_drug_name(scriptsnj16,'CLINDAMYCIN PHOS BENZOYL PEROX','CLINDAMYCIN BENZOYL PEROXIDE')
+clean_drug_name(scriptsnj16,'CLOBETASOL EMULSION','CLOBETASOL PROPIONATE EMOLL')
+clean_drug_name(scriptsnj16,'CLOBETASOL EMOLLIENT','CLOBETASOL PROPIONATE EMOLL')
+clean_drug_name(scriptsnj16,'CODEINE BUTALBITAL ASA CAFFEIN','BUTALBITAL COMPOUND CODEINE')
+clean_drug_name(scriptsnj16,'FOLIC ACID VIT B6 VIT B12','CYANOCOBALAMIN FA PYRIDOXINE')
+clean_drug_name(scriptsnj16,'CYANOCOBALAMIN INJECTION','CYANOCOBALAMIN VITAMIN B 12')
+clean_drug_name(scriptsnj16,'DESMOPRESSIN NONREFRIGERATED','DESMOPRESSIN ACETATE')
+clean_drug_name(scriptsnj16,'DEXAMETHASONE SOD PHOSPHATE','DEXAMETHASONE SODIUM PHOSPHATE')
+clean_drug_name(scriptsnj16,'AMPHETAMINE SALT COMBO','DEXTROAMPHETAMINE AMPHETAMINE')
+clean_drug_name(scriptsnj16,'DEXTROSE 5 0 45 NACL','DEXTROSE SODIUM CHLORIDE')
+clean_drug_name(scriptsnj16,'DEXTROSE 5 AND 0 9 NACL','DEXTROSE SODIUM CHLORIDE')
+clean_drug_name(scriptsnj16,'FLUCONAZOLE IN SALINE','FLUCONAZOLE IN NACL ISO OSM')
+clean_drug_name(scriptsnj16,'FLUOCINOLONE ACETONIDE','FLUOCINOLONE SHOWER CAP')
+clean_drug_name(scriptsnj16,'GLUCAGON EMERGENCY KIT','GLUCAGON HUMAN RECOMBINANT')
+clean_drug_name(scriptsnj16,'HALDOL DECANOATE 100','HALOPERIDOL DECANOATE 100')
+clean_drug_name(scriptsnj16,'HALDOL DECANOATE 50','HALOPERIDOL DECANOATE 100')
+clean_drug_name(scriptsnj16,'HYDROCODONE BT HOMATROPINE MBR','HYDROCODONE HOMATROPINE MBR')
+clean_drug_name(scriptsnj16,'HYDROCODONE BIT HOMATROP ME BR','HYDROCODONE HOMATROPINE MBR')
+clean_drug_name(scriptsnj16,'HYDROCODONE CHLORPHEN POLIS','HYDROCODONE CHLORPHENIRAMINE')
+clean_drug_name(scriptsnj16,'HYDROCODONE BIT IBUPROFEN','HYDROCODONE IBUPROFEN')
+clean_drug_name(scriptsnj16,'LIDOCAINE HYDROCORTISON','HYDROCORTISONE AC LIDOCAINE')
+clean_drug_name(scriptsnj16,'L METHYLFOLATE CALCIUM','LEVOMEFOLATE CALCIUM')
+clean_drug_name(scriptsnj16,'L METHYL B6 B12','METHYL B12 L MEFOLATE B6 PHOS')
+clean_drug_name(scriptsnj16,'METHYLPHENIDATE LA','METHYLPHENIDATE CD')
+clean_drug_name(scriptsnj16,'METHYLPHENIDATE SR','METHYLPHENIDATE CD')
+clean_drug_name(scriptsnj16,'PEN NEEDLE','NEEDLES INSULIN DISPOSABLE')
+clean_drug_name(scriptsnj16,'PEN NEEDLES','NEEDLES INSULIN DISPOSABLE')
+clean_drug_name(scriptsnj16,'NEOMYCIN POLYMYXIN HC','NEOMYCIN POLYMYXIN B SULF HC')
+clean_drug_name(scriptsnj16,'NEOMYCIN POLYMYXIN HYDROCORT','NEOMYCIN POLYMYXIN B SULF HC')
+clean_drug_name(scriptsnj16,'NEOMYCIN POLYMYXN B GRAMICIDIN','NEOMYCIN POLYMYXIN GRAMICIDIN')
+clean_drug_name(scriptsnj16,'PEN NEEDLES','NEEDLES INSULIN DISPOSABLE')
+clean_drug_name(scriptsnj16,'MULTIVITAMINS FLUORIDE','PEDI M VIT NO 17 FLUORIDE')
+clean_drug_name(scriptsnj16,'PEG 3350 AND ELECTROLYTES','PEG 3350 NA SULF BICARB CL KCL')
+clean_drug_name(scriptsnj16,'PEG 3350 ELECTROLYTE','PEG 3350 NA SULF BICARB CL KCL')
+clean_drug_name(scriptsnj16,'PIPERACILLIN TAZOBACTAM','PIPERACILLIN SODIUM TAZOBACTAM')
+clean_drug_name(scriptsnj16,'POLYMYXIN B SUL TRIMETHOPRIM','POLYMYXIN B SULF TRIMETHOPRIM')
+clean_drug_name(scriptsnj16,'DEXTROSE 5 0 45 NACL KCL','POTASSIUM CHLORIDE D5 0 45NACL')
+clean_drug_name(scriptsnj16,'PREDNISOLONE SOD PHOSPHATE','PREDNISOLONE SODIUM PHOSPHATE')
+clean_drug_name(scriptsnj16,'PROMETHAZINE VC CODEINE','PROMETHAZINE PHENYLEPH CODEINE')
+clean_drug_name(scriptsnj16,'SSD','SILVER SULFADIAZINE')
+clean_drug_name(scriptsnj16,'PEG 3350','SODIUM CHLORIDE NAHCO3 KCL PEG')
+clean_drug_name(scriptsnj16,'PEG 3350 FLAVOR PACKS','SODIUM CHLORIDE NAHCO3 KCL PEG')
+clean_drug_name(scriptsnj16,'SF','SODIUM FLUORIDE')
+clean_drug_name(scriptsnj16,'SF 5000 PLUS','SODIUM FLUORIDE')
+clean_drug_name(scriptsnj16,'SPS','SODIUM POLYSTYRENE SULFONATE')
+clean_drug_name(scriptsnj16,'SPIRONOLACTONE HCTZ','SPIRONOLACT HYDROCHLOROTHIAZID')
+clean_drug_name(scriptsnj16,'TETANUSHTHERIA TOXOIDS','TETANUS HTHERIA TOX ADULT')
+clean_drug_name(scriptsnj16,'TRIAMTERENE HCTZ','TRIAMTERENE HYDROCHLOROTHIAZID')
+clean_drug_name(scriptsnj16,'ALPRAZOLAM ODT','ALPRAZOLAM INTENSOL')
+#New ones from 2014
+clean_drug_name(scriptsnj16,'RENAL CAPS','B COMPLEX C NO 20 FOLIC ACID')
+clean_drug_name(scriptsnj16,'BETAMETHASONE PROPYLENE GLYCOL','BETAMETHASONE PROPYLENE GLYC')
+clean_drug_name(scriptsnj16,'BUTALB ACETAMINOPH CAFF CODEIN','BUTALBIT ACETAMIN CAFF CODEINE')
+clean_drug_name(scriptsnj16,'BUTALBIT ACETAMIN CAFF CODEIN','BUTALBIT ACETAMIN CAFF CODEINE')
+clean_drug_name(scriptsnj16,'CHOLESTYRAMINE LIGHT','CHOLESTYRAMINE ASPARTAME')
+clean_drug_name(scriptsnj16,'CARISOPRODOL COMPOUND CODEINE','CODEINE CARISOPRODOL ASPIRIN')
+clean_drug_name(scriptsnj16,'DEXTROAMPHETAMINE AMPHETAMINE','DEXTROAMPHETAMINE AMPHET')
+clean_drug_name(scriptsnj16,'DEXTROSE IN LACTATED RINGERS','DEXTROSE 5 LACTATED RINGERS')
+clean_drug_name(scriptsnj16,'DEXTROSE 5 0 9 NACL','DEXTROSE SODIUM CHLORIDE')
+clean_drug_name(scriptsnj16,'DILTIAZEM 24HR','DILTIAZEM')
+clean_drug_name(scriptsnj16,'DILTIAZEM 12HR','DILTIAZEM')
+clean_drug_name(scriptsnj16,'DILTIAZEM 24HR CD','DILTIAZEM')
+clean_drug_name(scriptsnj16,'DOBUTAMINE IN DEXTROSE','DOBUTAMINE D5W')
+clean_drug_name(scriptsnj16,'DOXORUBICIN PEG LIPOSOMAL','DOXORUBICIN LIPOSOMAL')
+clean_drug_name(scriptsnj16,'HYDROCODONE CHLORPHENIRAMNE','HYDROCODONE CHLORPHEN P STIREX')
+clean_drug_name(scriptsnj16,'LANSOPRAZOL AMOXICIL CLARITHRO','LANSOPRAZOLE AMOXICILN CLARITH')
+clean_drug_name(scriptsnj16,'MYCOPHENOLATE SODIUM','MYCOPHENOLIC ACID')
+clean_drug_name(scriptsnj16,'INSULIN PEN NEEDLE','NEEDLES INSULIN DISPOSABLE')
+clean_drug_name(scriptsnj16,'NEOMYCIN POLYMYXIN DEXAMETH','NEO POLYMYX B SULF DEXAMETH')
+clean_drug_name(scriptsnj16,'NEOMYCIN BACITRACIN POLY HC','NEOMY SULF BACITRAC ZN POLY HC')
+clean_drug_name(scriptsnj16,'NITROFURANTOIN','NITROFURANTOIN MONOHYD M CRYST')
+clean_drug_name(scriptsnj16,'MULTIVITAMIN FLUORIDE','PEDI M VIT NO 17 FLUORIDE')
+clean_drug_name(scriptsnj16,'DEXTROSE 5 1 2NS KCL','POTASSIUM CHLORIDE D5 0 45NACL')
+clean_drug_name(scriptsnj16,'LACTATED RINGERS','RINGERS SOLUTION LACTATED')
+clean_drug_name(scriptsnj16,'VERAPAMIL SR','VERAPAMIL')
+#New ones form 2016
+clean_drug_name(scriptsnj16,'ALCOHOL PREP SWABS','ALCOHOL PADS')
+clean_drug_name(scriptsnj16,'AMLODIPINE VALSARTAN HCTZ','AMLODIPINE VALSARTAN HCTHIAZID')
+clean_drug_name(scriptsnj16,'AMOXICILLIN CLAVULANATE POT','AMOXICILLIN CLAVULANATE')
+clean_drug_name(scriptsnj16,'AMOXICILLIN CLAVULANATE POTASS','AMOXICILLIN CLAVULANATE')
+clean_drug_name(scriptsnj16,'DOXYCYCLINE IR DR','DOXYCYCLINE MONOHYDRATE')
+clean_drug_name(scriptsnj16,'FLUCONAZOLE IN NACL ISO OSM','FLUCONAZOLE NACL')
+clean_drug_name(scriptsnj16,'GENTAMICIN SULFATE IN NS','GENTAMICIN IN NACL ISO OSM')
+clean_drug_name(scriptsnj16,'LEVONORGESTREL ETH ESTRADIOL','LEVONORGESTREL ETHIN ESTRADIOL')
+clean_drug_name(scriptsnj16,'MILRINONE IN 5 DEXTROSE','MILRINONE LACTATE D5W')
+clean_drug_name(scriptsnj16,'NORETHINDRON ETHINYL ESTRADIOL','NORETHINDRON AC ETH ESTRADIOL')
+clean_drug_name(scriptsnj16,'K EFFERVESCENT','POTASSIUM BICARBONATE CIT AC')
+
+#Now that the data is cleaned ... Making a new column to see if the drug prescibed is a generic or brand name
+scriptsnj16['brand_drug?'] = scriptsnj16['drug_name']!=scriptsnj16['generic_name']
+#Making an amount of brand drugs column so we know how many brand drugs they wrote presciptions for
+scriptsnj16['amount_brand'] = (scriptsnj16['total_claim_count']*scriptsnj16['brand_drug?'])
+#Converted the drug cost from a string to a float
+#Removing the dollar sign
+scriptsnj16['total_drug_cost'] = scriptsnj16['total_drug_cost'].map(lambda x: x.replace('$', ''))
+#Converting
+scriptsnj16['total_drug_cost'] = scriptsnj16['total_drug_cost'].astype('float')
+#Making a new column of the year
+scriptsnj16['year'] = 2016
+#Making a new column stating whether the doc received payments or not by searching for their npi in the payments df for that year
+paymentsnj16 = pd.read_csv('/Volumes/Seagate/Galvanize/nj_payments_2016_consl.csv',
+                            dtype={'zip':object,'name_d1':object,'name_d5':object,'ndc_d1':object,'ndc_d2':object, \
+                                   'ndc_d3':object, 'ndc_d4':object,'ndc_d5':object, 'npi':object,'company_id':object, \
+                                  'payment_id':object,'record_id':object})
+paid_docs = list(set(paymentsnj16.npi).intersection(set(scriptsnj16.npi)))
+scriptsnj16['recieved_payments'] = scriptsnj16['npi'].isin(paid_docs)
+#Saving the hardwork
+scriptsnj16.to_csv('/Volumes/Seagate/Galvanize/2016_scriptsnj.csv',index=False)
+
+
+
+
 #Joining all the years into 1 df
-scriptsnjfull = pd.concat([scriptsnj13,scriptsnj14,scriptsnj15])
+scriptsnjfull = pd.concat([scriptsnj13,scriptsnj14,scriptsnj15,scriptsnj16])
 #Cleaning up how I want the columns arranged
 scriptsnjfull = scriptsnjfull[scriptsnjfull.columns.tolist()[:6]+scriptsnjfull.columns.tolist()[-3:-2]+ \
                             scriptsnjfull.columns.tolist()[-1:] + scriptsnjfull.columns.tolist()[8:9] + \

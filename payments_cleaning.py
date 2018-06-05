@@ -1,4 +1,4 @@
-record_idimport numpy as np
+import numpy as np
 import pandas as pd
 import re
 
@@ -228,11 +228,76 @@ payments_nj_15.to_csv('/Volumes/Seagate/Galvanize/nj_payments_2015_consl.csv',in
 
 
 
+"""2016 DATA"""
+"""Cleaning the Payments Data & adding the NPI along with the payment_id"""
+#These are the columns I found to be useful
+new_cols = {'Physician_Profile_ID':'payment_id','Physician_First_Name':'fn','Physician_Last_Name':'ln', \
+            'Recipient_Primary_Business_Street_Address_Line1':'address','Recipient_City':'city','Recipient_State':'state', \
+            'Recipient_Zip_Code':'zip','Physician_Specialty':'specialty', 'Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_ID':'company_id',\
+            'Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_Name':'company','Total_Amount_of_Payment_USDollars':'amount', \
+            'Form_of_Payment_or_Transfer_of_Value':'form','Nature_of_Payment_or_Transfer_of_Value':'nature', \
+            'Physician_Ownership_Indicator':'phys_owns','Record_ID':'record_id', \
+            'Product_Indicator':'for_product','Name_of_Associated_Covered_Drug_or_Biological1':'name_d1', \
+            'Name_of_Associated_Covered_Drug_or_Biological2':'name_d2','Name_of_Associated_Covered_Drug_or_Biological3':'name_d3', \
+            'Name_of_Associated_Covered_Drug_or_Biological4':'name_d4','Name_of_Associated_Covered_Drug_or_Biological5':'name_d5', \
+            'NDC_of_Associated_Covered_Drug_or_Biological1':'ndc_d1','NDC_of_Associated_Covered_Drug_or_Biological2':'ndc_d2', \
+            'NDC_of_Associated_Covered_Drug_or_Biological3':'ndc_d3','NDC_of_Associated_Covered_Drug_or_Biological4':'ndc_d4', \
+            'NDC_of_Associated_Covered_Drug_or_Biological5':'ndc_d5','Program_Year':'year'}
+#Load the  df & selecting only NJ doctors
+pay16 = pd.read_csv('/Volumes/Seagate/Galvanize/2016 Open Payments/OP_DTL_GNRL_PGYR2016_P01172018.csv', \
+                    dtype={'Recipient_Zip_Code':object,'NDC_of_Associated_Covered_Drug_or_Biological1':object}, \
+                    usecols=list(new_cols.keys()))
+#Selecting only NJ docs
+pay16nj= pay16[pay16['Recipient_State']=='NJ']
+#Linking NPIs & payment_ids in the df
+pay16nj['npi'] = pay16nj['Physician_Profile_ID'].map(npi_full)
+#Only getting the columns that have an NPI linked to the payments_id (this is because I'm looking at the payments (which uses payments_id) & prescriptions (which uses NPI), it's no use to me right now if I don't have data for a doctor in both tables)
+payments_nj16 = pay16nj.loc[np.isfinite(pay16nj['npi'].astype(float))]
+#Renaming columns
+payments_nj16.rename(columns=new_cols,inplace=True)
+#Saving as a csv for future use
+payments_nj16.to_csv('/Volumes/Seagate/Galvanize/nj_payments_2016_consl.csv',index=False)
+#Reading the csv that we saved, The NDCs have to be read as objects becuase otherwise the leading 0s get cut
+payments_nj_16 = pd.read_csv('/Volumes/Seagate/Galvanize/nj_payments_2016_consl.csv',
+                            dtype={'zip':object,'name_d1':object,'name_d5':object,'ndc_d1':object,'ndc_d2':object, \
+                                   'ndc_d3':object, 'ndc_d4':object,'ndc_d5':object, 'npi':np.int64})
+#Cleaning first name, last name, drug names, cities, zip codes, & addresses
+clean_name(payments_nj_16,['fn','ln','name_d1','name_d2','name_d3','name_d4','name_d5','city','zip'])
+#I don't want to remove spaces in the addresses so I'll do that seperate:
+payments_nj_16['address'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in payments_nj_16['address']]
+#Cleaning the Company Names so 1 company_id is matched with 1 company
+#I grouped companies by their company id & name (df) and then found the IDs that showed up belonging to more than 1 company (df2)
+df = payments_nj_16.groupby(['company_id','company']).sum()['amount']
+df = df.to_frame()
+df.reset_index(inplace=True)
+df2 = df[df['company_id'].isin(df['company_id'][df['company_id'].duplicated()])].sort_values("company_id")
+#Removes punctuation & uppercases string
+payments_nj_16['company'] = [re.sub(r'[^\w\s]','',str(x).upper()) for x in payments_nj_16['company']]
+#Removes Extra words from company names (incorporated, corporation, inc, corp, llc, lp) & extra spacing or leading/ending spaces
+payments_nj_16['company'] = payments_nj_16['company'].map(lambda x: ' '.join((str(x).replace('INCORPORATED','').replace('CORPORATION','')\
+                                    .replace('INC','').replace('CORP','').replace('LLC','').replace('LP','')).split()))
+"""
+There were no special cases for this year where I had to hard code changing a compnay name so 1 company_id = 1 company
+"""
+#Saving this as a CSV for future use (it's saved as the same as the one we loaded, but now it's cleaned)
+payments_nj_16.to_csv('/Volumes/Seagate/Galvanize/nj_payments_2016_consl.csv',index=False)
+
+
+
+
 #Joining all the years into 1 df
 payments_nj_full = pd.concat([payments_nj_13,payments_nj_14,payments_nj_15])
 #Rearranging the columns (npi was last & I wanted it closer to the names)
-payments_nj_full=payments_nj_full[payments_nj_full.columns.tolist()[:1]+ \
-                                  payments_nj_full.columns.tolist()[-1:]+payments_nj_full.columns.tolist()[1:-1]]
+payments_nj_full = payments_nj_full[payments_nj_full.columns.tolist()[-7:-6]+ payments_nj_full.columns.tolist()[-8:-7] + \
+                     payments_nj_full.columns.tolist()[5:6]+payments_nj_full.columns.tolist()[7:8] + \
+                     payments_nj_full.columns.tolist()[:1]+payments_nj_full.columns.tolist()[2:3] + \
+                     payments_nj_full.columns.tolist()[-3:-2]+payments_nj_full.columns.tolist()[-1:] + \
+                     payments_nj_full.columns.tolist()[-4:-3]+payments_nj_full.columns.tolist()[4:5]+ \
+                     payments_nj_full.columns.tolist()[3:4]+payments_nj_full.columns.tolist()[1:2] + \
+                     payments_nj_full.columns.tolist()[6:7]+payments_nj_full.columns.tolist()[13:14] + \
+                     payments_nj_full.columns.tolist()[-6:-5] + payments_nj_full.columns.tolist()[-5:-4]+ \
+                     payments_nj_full.columns.tolist()[8:13] + payments_nj_full.columns.tolist()[14:19]+ \
+                     payments_nj_full.columns.tolist()[-2:-1]]
 #We have some NaNs saved as strings so just converting them back
 payments_nj_full.replace(to_replace='NAN',value=np.nan,inplace=True)
 #Cleaning the Company Names so 1 company_id is matched with 1 company
@@ -249,6 +314,9 @@ Unless the smaller sum donated company bought out the other"""
 conv = {'ZIMMER HOLDING':'ZIMMER BIOMET HOLDINGS','ZOLL SERVICES AKA ZOLL LIFECOR':'ZOLL LIFECOR', \
             'BIOGEN IDEC':'BIOGEN','GRIFOLS SHARED SERVICES NORTH AMERICA':'GRIFOLS SHARED SERVICES', \
            'GRIFOLS':'GRIFOLS SHARED SERVICES','IMPLANT DIRECT INTERNATIONAL':'IMPLANT DIRECT SYBRON INTERNATIONAL', \
+           'AASTROM BIOSCIENCES':'VERICEL', 'APOLLO ENDOSURGERY US':'APOLLO ENDOSURGERY', \
+           'AEROCRINE':'CIRCASSIA PHARMACEUTICALS', 'VISIONCARE OPHTHALMIC TECHNOLOGIES':'VISIONCARE', \
+           'THERAVANCE BIOPHARMA':'THERAVANCE', 'PROSTRAKAN':'KYOWA KIRIN','HOSPIRA WORLDWIDE':'HOSPIRA', \
            'DJO GLOBAL':'DJO','THERAVANCE BIOPHARMA':'THERAVANCE','EVERETT LABORATORIES':'EXELTIS USA', \
             'VISIONCARE':'VISIONCARE OPHTHALMIC TECHNOLOGIES','CORNERSTONE THERAPEUTICS':'CHIESI USA', \
            'CREALTA PHARMACEUTICALS':'HORIZON PHARMA RHEUMATOLOGY'}

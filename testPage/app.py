@@ -26,6 +26,10 @@ def index():
 def testing():
     return render_template('findings.html')
 
+@app.route('/methods/')
+def method():
+    return render_template('methods.html')
+
 @app.route('/raw-data/')
 def raw_data():
     return render_template('raw_data.html')
@@ -56,8 +60,15 @@ def results():
 
 @app.route('/graph/npi/<int:NPI>')
 def graph_npi(NPI):
-    output = company_breakdown_bynpi.company_breakdown(paid,NPI)
-    return render_template('graph_npi.html',output=output)
+    try:
+        output = company_breakdown_bynpi.company_breakdown(paid,NPI)
+        return render_template('graph_npi.html',output=output)
+    except IndexError:
+        return render_template('404.html'), 404
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 #DON'T USE THIS
 """
