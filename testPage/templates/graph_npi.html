@@ -27,11 +27,12 @@
 
 <!-- Page -->
 <body class="index-page sidebar-collapse">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <!-- Navigation Bar -->
   <nav class="navbar navbar-inverse navbar-expand-lg bg-dark fixed-top navbar-expand-lg" id="sectionsNav">
     <div class="container">
       <div class="navbar-translate">
-          <a class="navbar-brand" href="../../">
+          <a class="navbar-brand" href="{{ url_for('index') }}">
             <b> Drug Money </b> </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -41,31 +42,31 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
-          <li class="dropdown nav-item">
-            <a class="dropdown-toggle nav-link" data-toggle="dropdown">
-              <i class="material-icons">functions</i> Analysis
-            </a>
-            <div class="dropdown-menu dropdown-with-icons">
-              <a href="#" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
-                <i class="material-icons">bar_chart</i> Methods
-              </a>
-              <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
-              href="../../findings" data-original-title="">
-                <i class="material-icons">library_books</i> Findings
-              </a>
-              <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
-              href="../../raw-data" data-original-title="Download raw datasets">
-                <i class="material-icons">get_app</i> Raw Data
-              </a>
-            </div>
-          </li>
           <li class="nav-item">
             <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
               <i class="material-icons">code</i> Source code
             </a>
           </li>
+          <li class="dropdown nav-item">
+            <a class="dropdown-toggle nav-link" data-toggle="dropdown">
+              <i class="material-icons">functions</i> Analysis
+            </a>
+            <div class="dropdown-menu dropdown-with-icons">
+              <a href="{{ url_for('method') }}" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
+                <i class="material-icons">library_books</i> Dissertation
+              </a>
+              <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
+              href="{{ url_for('testing') }}" data-original-title="">
+                <i class="material-icons">bar_chart</i> Findings
+              </a>
+              <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
+              href="{{ url_for('raw_data') }}" data-original-title="Download raw datasets">
+                <i class="material-icons">get_app</i> Raw Data
+              </a>
+            </div>
+          </li>
           <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="../../search" data-original-title="Find your Doctor">
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="{{ url_for('search') }}" data-original-title="Find your Doctor">
               <i class="material-icons">search</i> Search Doctors
             </a>
           </li>
@@ -84,18 +85,6 @@
               <i class="material-icons">email</i>
             </a>
           </li>
-          <!--- This is just if I want a drop down menu later
-          <li class="dropdown nav-item">
-            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-              <i class="material-icons">person</i> Contact
-            </a>
-            <div class="dropdown-menu dropdown-with-icons">
-              <a href="mailto:kunal-s@outlook.com?Subject=Payments%20Capstone" target="_blank" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="kunal-s@outlook.com">
-                <i class="material-icons">email</i> Email
-              </a>
-            </div>
-          </li>
-          //-->
         </ul>
       </div>
     </div>
@@ -107,11 +96,27 @@
   <div class="main main-raised">
     <div class="section section-basic">
       <div class="container">
-        <!-- Graph -->
+        <!-- Return to result -->
         <div>
-          <a href="javascript:window.close();" class="btn btn-link btn-primary btn-lg"><i class="material-icons">arrow_back</i>Return to Results</a>
-          <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-          {{ output|safe }}
+          <a href="javascript:window.close();" class="btn btn-link btn-primary btn-md"><i class="material-icons">arrow_back</i>Return to Results</a>
+        </div>
+        <!-- Doc Info -->
+        <div>
+          <h2>Dr. {{ fn }} {{ ln }}, {{ type }}<br></h2>
+          <h3><small class='text-primary'>{{ spec }}</small><br>
+          <p class="text-muted"><small>{{ address }}, {{ city }}, {{ state }} {{ zip }} </small></p></h3>
+        </div>
+        <!-- Table -->
+        <div class="row">
+          <aside class="col-md-7">
+            {{ paid_table|safe }}
+          </aside>
+          <section class="col-md-5">
+            {{ pie_type|safe }}
+          </section>
+        <!-- Graphs -->
+          {{ pay_by_comp|safe }}
+          {{ scripts_by_comp|safe }}
         </div>
         <!--                 end graph		         -->
       </div>

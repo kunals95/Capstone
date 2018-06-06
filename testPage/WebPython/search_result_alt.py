@@ -49,24 +49,27 @@ def results_py(df,dic):
         bold = lambda x: '<b>'+x+'</b>'
         def colors(df):
             if len(df) == 1:
-                return([['lightgrey']])
+                return([['white']])
             elif len(df)!=1 & len(df) %2 !=0:
-                return([['lightgrey','white'] * int((len(df.columns)/2))+['lightgrey']])
+                return([int((len(df)/2))*['white','rgb(240, 240, 240)']+['white']])
             else:
-                return([['lightgrey','white'] * int((len(df.columns)/2))])
+                return([['white','rgb(240, 240, 240)'] * int((len(df)/2))])
         table = go.Table(
             type='table',
             columnwidth=[65,55,55,40,35,80,70,40],
             header = dict(
                 values=bold(df.columns),
-                fill=dict(color='black'),
+                fill=dict(color='rgb(240, 240, 240)'),
                 align=['center'],
-                font=dict(color='white',size=13)
+                font=dict(color='black',size=16, family="Roboto Condensed"),
+                line=dict(width=0,color='black')
                 ),
             cells = dict(
                 values=makelist(df),
                 fill=dict(color=colors(df)),
-                font=dict(color='black',size=11)
+                font=dict(color='black',size=13, family="Roboto Condensed"),
+                height=15,
+                line=dict(width=0),
                 ))
         data = [table]
         return(plotly.offline.plot(data, include_plotlyjs=False, output_type='div'))

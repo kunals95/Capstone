@@ -13,10 +13,12 @@ import search_result_alt, search_results
 from flask import Flask, request, render_template
 app = Flask(__name__)
 
-doc_info = pd.read_csv('/Volumes/Seagate/Galvanize/nj_doc_info.csv',dtype={'Zip Code':object,'NPI':object})
+doc_info = pd.read_csv('/Volumes/Seagate/Galvanize/nj_doc_info_paid.csv',dtype={'Zip Code':object,'NPI':object})
+doc_info.fillna(value='-',inplace=True)
 paid = pd.read_csv('/Volumes/Seagate/Galvanize/nj_payments_all_years_consl.csv',
                             dtype={'zip':object,'npi':object,'company_id':object}, \
                   usecols=[1,2,3,10,11,12,13,26])
+scripts = pd.read_csv('/Volumes/Seagate/Galvanize/nj_scripts_all_years.csv',dtype={'zip':object,'npi':object})
 
 @app.route('/')
 def index():
@@ -61,8 +63,20 @@ def results():
 @app.route('/graph/npi/<int:NPI>')
 def graph_npi(NPI):
     try:
-        output = company_breakdown_bynpi.company_breakdown(paid,NPI)
-        return render_template('graph_npi.html',output=output)
+        info_df = doc_info[doc_info['NPI']==str(NPI)]
+        fn_df = list(info_df['First Name'].values)[0]
+        ln_df = list(info_df['Last Name'].values)[0]
+        city_df = list(info_df['City'].values)[0]
+        address_df = list(info_df['Address'].values)[0]
+        zip_df = list(info_df['Zip Code'].values)[0]
+        state_df = list(info_df['State'].values)[0]
+        type_df = list(info_df['Type'].values)[0]
+        spec_df = list(scripts[scripts['npi']==str(NPI)]['specialty_description'].values)[0]
+        pay_by_comp = company_breakdown_bynpi.pay_company_breakdown(paid,NPI)
+        scripts_by_comp = company_breakdown_bynpi.scripts_company_breakdown(scripts,NPI)
+        paid_table = company_breakdown_bynpi.pay_table(paid,NPI)
+        pie_type = company_breakdown_bynpi.pie_type(paid,NPI)
+        return render_template('graph_npi.html', pay_by_comp=pay_by_comp, paid_table=paid_table, pie_type=pie_type, scripts_by_comp=scripts_by_comp, fn=fn_df, ln=ln_df, address=address_df, city=city_df, zip=zip_df, state=state_df, type=type_df, spec=spec_df)
     except IndexError:
         return render_template('404.html'), 404
 

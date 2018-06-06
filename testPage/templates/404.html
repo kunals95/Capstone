@@ -32,17 +32,22 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
+              <i class="material-icons">code</i> Source code
+            </a>
+          </li>
           <li class="dropdown nav-item">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <i class="material-icons">functions</i> Analysis
             </a>
             <div class="dropdown-menu dropdown-with-icons">
               <a href="{{ url_for('method') }}" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
-                <i class="material-icons">bar_chart</i> Methodology
+                <i class="material-icons">library_books</i> Dissertation
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
               href="{{ url_for('testing') }}" data-original-title="">
-                <i class="material-icons">library_books</i> Findings
+                <i class="material-icons">bar_chart</i> Findings
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
               href="{{ url_for('raw_data') }}" data-original-title="Download raw datasets">
@@ -51,12 +56,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
-              <i class="material-icons">code</i> Source code
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="../search" data-original-title="Find your Doctor" >
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="{{ url_for('search') }}" data-original-title="Find your Doctor" >
               <i class="material-icons">search</i> Search Doctors
             </a>
           </li>
@@ -80,13 +80,13 @@
     </div>
   </nav>
   <!-- Header -->
-  <div class="subpage-header" data-parallax="true" style="background-image: url({{ url_for('static', filename='assets/img/money-blur.jpg') }});">
+  <div class="subpage-header" data-parallax="true" style="background-image: url({{ url_for('static', filename='assets/img/pills.png') }});">
     <div class="container">
       <div class="row">
         <div class="col-md-8 ml-auto mr-auto">
           <div class="brand" style="background-color:rgba(0,0,0,0.52);min-height: 100px">
               <p>&nbsp;</p>
-              <p class="h2-heading"style="color:White;font-size:40px"><i>Uh-Oh :(</i></p>
+              <p class="h2-heading"style="color:White;font-size:40px">&#9785;<i>  Uh-Oh You've Spilled Your Pills  </i>&#9785;</p>
           </div>
         </div>
       </div>
@@ -98,9 +98,9 @@
       <div class="container">
         <div class="title">
           <h2>Page Not Found</h2>
-          <h5>The page you're looking for can't be found :(</h5>
-          <p><a href="{{ url_for('index') }}">Go somewhere nice</a>
+          <h4>I'm a <b>data scientist</b>, not a web developer...I can't make ALL these pages 😅</h4>
         </div>
+        <h4><a href="{{ url_for('index') }}"><em>Click here to go somewhere with prettier pictures</em></a></h4>
       </div>
     </div>
   </div>

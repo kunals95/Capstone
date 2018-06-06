@@ -41,28 +41,28 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
+              <i class="material-icons">code</i> Source code
+            </a>
+          </li>
           <li class="dropdown nav-item">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <i class="material-icons">functions</i> Analysis
             </a>
             <div class="dropdown-menu dropdown-with-icons">
-              <a href="#" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
-                <i class="material-icons">bar_chart</i> Methods
+              <a href="../methods" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
+                <i class="material-icons">library_books</i> Dissertation
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
               href="" data-original-title="">
-                <i class="material-icons">library_books</i> Findings
+                <i class="material-icons">bar_chart</i> Findings
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
               href="../raw-data" data-original-title="Download raw datasets">
                 <i class="material-icons">get_app</i> Raw Data
               </a>
             </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
-              <i class="material-icons">code</i> Source code
-            </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="../search" data-original-title="Find your Doctor">
@@ -107,7 +107,7 @@
         <div class="col-md-8 ml-auto mr-auto">
           <div class="brand" style="background-color:rgba(0,0,0,0.52);min-height: 100px">
               <p>&nbsp;</p>
-              <p class="h2-heading"style="color:White;font-size:24px"><i>How do payments influence the prescriptions doctors write?</i></p>
+              <p class="h2-heading"style="color:White;font-size:24px"><i>Do payments <b>actually</b> affect the type of prescriptions doctors write?</i></p>
           </div>
         </div>
       </div>
@@ -118,59 +118,16 @@
     <div class="section section-basic">
       <div class="container">
         <div class="title">
-          <h2>Basic Elements</h2>
+          <h2>Findings</h2>
         </div>
-        <!--  buttons -->
-        <div id="buttons" class="cd-section">
-          <div class="title">
-            <h3>Buttons
-              <br>
-              <small>Pick your style</small>
-            </h3>
-          </div>
-          <div class="row">
-            <div class="col-md-8 ml-auto mr-auto">
-              <button class="btn btn-primary">Default</button>
-              <button class="btn btn-primary btn-round">Round</button>
-              <button class="btn btn-primary btn-round">
-                <i class="material-icons">favorite</i> With Icon
-              </button>
-              <button class="btn btn-primary btn-fab btn-round">
-                <i class="material-icons">favorite</i>
-              </button>
-              <button class="btn btn-primary btn-link">Simple</button>
-            </div>
-          </div>
-          <div class="title">
-            <h3>
-              <small>Pick your size</small>
-            </h3>
-          </div>
-          <div class="row">
-            <div class="col-md-8 ml-auto mr-auto">
-              <button class="btn btn-primary btn-sm">Small</button>
-              <button class="btn btn-primary">Regular</button>
-              <button class="btn btn-primary btn-lg">Large</button>
-            </div>
-          </div>
-          <div class="title">
-            <h3>
-              <small> Pick your color </small>
-            </h3>
-          </div>
-          <div class="row">
-            <div class="col-md-8 ml-auto mr-auto">
-              <button class="btn">Default</button>
-              <button class="btn btn-primary">Primary</button>
-              <button class="btn btn-info">Info</button>
-              <button class="btn btn-success">Success</button>
-              <button class="btn btn-warning">Warning</button>
-              <button class="btn btn-danger">Danger</button>
-              <button class="btn btn-rose">Rose</button>
-            </div>
-          </div>
+        <div>
+          <p class="text-primary">In order to determine if there was a significant difference in the amount of brand name prescriptions written by doctors who were paid and their colleagues who were not, i utlized an <b>unequal varainces t-test</b> (Welch's t-test).<br>Since there are many confouding factors that could come into play I took a couple of approaches in order to help eliminate as much error as I could.<br>
+          <ol>
+            <li>
+              I only compared doctors within the same speciality. This was primary due to the fact that the type of prescriptions a 
+            </li>
+          </ol>
         </div>
-        <!--                 end buttons		         -->
       </div>
     </div>
   </div>

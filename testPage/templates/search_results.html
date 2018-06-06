@@ -41,28 +41,28 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
+              <i class="material-icons">code</i> Source code
+            </a>
+          </li>
           <li class="dropdown nav-item">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <i class="material-icons">functions</i> Analysis
             </a>
             <div class="dropdown-menu dropdown-with-icons">
-              <a href="#" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
-                <i class="material-icons">bar_chart</i> Methods
+              <a href="../../methods" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="">
+                <i class="material-icons">library_books</i> Dissertation
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
               href="../../findings" data-original-title="">
-                <i class="material-icons">library_books</i> Findings
+                <i class="material-icons">bar_chart</i> Findings
               </a>
               <a class="dropdown-item" rel="tooltip" title="" data-placement="left"
               href="../../raw-data" data-original-title="Download raw datasets">
                 <i class="material-icons">get_app</i> Raw Data
               </a>
             </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/kunals95/Capstone" target="_blank" data-original-title="Review my Code">
-              <i class="material-icons">code</i> Source code
-            </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="../" data-original-title="Find your Doctor">
@@ -84,18 +84,6 @@
               <i class="material-icons">email</i>
             </a>
           </li>
-          <!--- This is just if I want a drop down menu later
-          <li class="dropdown nav-item">
-            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-              <i class="material-icons">person</i> Contact
-            </a>
-            <div class="dropdown-menu dropdown-with-icons">
-              <a href="mailto:kunal-s@outlook.com?Subject=Payments%20Capstone" target="_blank" class="dropdown-item" rel="tooltip" title="" data-placement="left" data-original-title="kunal-s@outlook.com">
-                <i class="material-icons">email</i> Email
-              </a>
-            </div>
-          </li>
-          //-->
         </ul>
       </div>
     </div>
@@ -109,9 +97,10 @@
       <div class="container">
         <div class="title">
           <h2>Search Results</h2>
+            <h4><a href="../"><i class="material-icons">search</i>New Search</a></h4>
           <div>
-          <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-          {{ output2|safe }}
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            {{ output2|safe }}
           </div>
         </div>
       </div>
