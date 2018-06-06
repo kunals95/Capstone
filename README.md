@@ -56,3 +56,52 @@ I wanted to dive in to not only see how these companies are paying doctors but a
     </li>
     <li><b>Confounding Factors</b><br>
       There are numerous other factors that could possibly affect that percentage of brand-name prescriptions that a doctor writes, which I did not have access to here. Whether it be a doctor's patient base, location, drug recalls, etc., without more information it is hard to determine whether receiving payments has an effect on the number of brand-name drugs a doctor prescribes. <b style="color:crimson">My findings show a correlation between the two but do NOT imply causation.</b><br>
+
+
+  <h2>Findings</h2>
+  <h4>
+    <b>Basis</b>
+  </h4>
+  <p class="text-primary">In order to determine if there was a significant difference in the number of brand name prescriptions written by doctors who were paid and their colleagues who were not, I performed A/B testing on various specialties by utilizing <b>unequal variances t-tests</b> (Welch's t-tests). Due to the large number of t-tests that were being done, the probability of encountering a Type I error increases greatly. In order to reduce Type I error I utilized a Bonferroni correction where my significance level was divided by the number of tests being run, thereby increasing our threshold even further and limiting error.<br>Since there are many confounding factors that could come into play I took a couple of approaches in order to help eliminate as much error as I could.<br>
+  <ol>
+    <li>
+      I only compared doctors within the same specialty. This was primarily due to the fact that the type of prescriptions a doctor in a specialty like Anesthesiology is going to be drastically different than the prescriptions a Pediatrician would write. This could cause disparities between the percentage of brand name prescriptions certain specialties wrote, due to availability for different drugs.
+    </li>
+    <li>
+      I only performed t-tests on prescriptions and payments within the same year due to the fact that new drug releases, drug recalls, and copyright expirations could also drastically change the percentage of brand-name drugs prescribed.
+    </li>
+    <li>
+      I only utilized specialties where the number of unique doctors who received and the number that did not receive payments were both greater than 30. This eliminated a number of the 100+ specialties I was testing. The primary reasoning behind this was that too small of a sample size in an already limited frame, would not be indicative of the population and results should not be viewed heavily. In addition, certain specialties such as Nurse Practitioners, Physician Assistants, etc. were not included in the Open Payments database since corporations were not required to release details regarding payments made to these specialties. I could not perform testing on these specialties since the positive class was 0.
+    </li>
+  </ol>
+
+<h4>
+  <b>Results</b>
+</h4>
+<p class="text-primary">Overall, my results were fairly common throughout, through all years there were only 3 specialties which displayed a significant difference in the mean percentage of brand name prescriptions written by paid doctors to those who weren't paid, even when they were compared for all years combined.<br>The specialties with a statistically significant difference were:
+  <ol>
+    <li>
+      <b>Family Practice</b>
+      <ul>
+        <li>Non-paid Doctors mean brand name prescriptions: <b>12.8%</b></li>
+        <li>Paid Doctors mean brand name prescriptions: <b>15.2%</b></li>
+        <li>P-value: <b>9.41 x 10<sup>-6</sup></b></li>
+      </ul>
+    </li>
+    <li>
+      <b>Internal Medicine</b>
+      <ul>
+        <li>Non-paid Doctors mean brand name prescriptions: <b>14.8%</b></li>
+        <li>Paid Doctors mean brand name prescriptions: <b>17.6%</b></li>
+        <li>P-value: <b>2.77 x 10<sup>-4</sup></b></li>
+      </ul>
+    </li>
+    <li>
+      <b>Ophthalmology</b>
+      <ul>
+        <li>Non-paid Doctors mean brand name prescriptions: <b>41.4%</b></li>
+        <li>Paid Doctors mean brand name prescriptions: <b>50.1%</b></li>
+        <li>P-value: <b>1.43 x 10<sup>-8</sup></b></li>
+      </ul>
+    </li>
+  </ol>
