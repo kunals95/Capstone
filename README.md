@@ -56,7 +56,8 @@ I wanted to dive in to not only see how these companies are paying doctors but a
     </li>
     <li><b>Confounding Factors</b><br>
       There are numerous other factors that could possibly affect that percentage of brand-name prescriptions that a doctor writes, which I did not have access to here. Whether it be a doctor's patient base, location, drug recalls, etc., without more information it is hard to determine whether receiving payments has an effect on the number of brand-name drugs a doctor prescribes. <b style="color:crimson">My findings show a correlation between the two but do NOT imply causation.</b><br>
-
+      </li>
+      </ol>
 
   <h2>Findings</h2>
   <h4>
