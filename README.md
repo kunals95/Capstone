@@ -1,5 +1,6 @@
 # Drug Money
 
+<h3><b>Introduction</b></h3>
 Every year pharmaceutical and biological manufacturing companies spend upwards of $3 Billion in various forms of payments for healthcare professionals. Whether it be food, travel, gifts, or licensing fees each payment must be disclosed to the Centers of Medicare & Medicaid Services. In 2014, the government decided to make this information publicly available as a part of a dataset call Open Payments.
 
 I wanted to dive in to not only see how these companies are paying doctors but also the effects that these payments may have. Utilizing other datasets also publicly available through the Centers of Medicare & Medicaid Services, I analyzed payments received by doctors along with the prescriptions written by them to see if any insight could be found. With **over 30 GB** in CSV files, I was able to find trends within certain specialties displaying statistically significant differences in the number of brand name prescriptions written by doctors receiving payments versus their colleagues who were not receiving payments.
@@ -41,7 +42,7 @@ I wanted to dive in to not only see how these companies are paying doctors but a
 </div>
 <div>
 <p class="text-primary">
-  It is important to note that this analysis is not all encompassing and has many limiations which could significantly alter it's results.<br>
+  It is important to note that this analysis is not all-encompassing and has many limitations which could significantly alter it's results.<br>
   <ol>
     <li><b>Generic Alternatives</b><br>
       A factor that I was not able to account for was checking if there are any current generic alternatives for the <i>name brand</i> drug a doctor prescribed. This is important as doctors who have to prescribe their patients medications without any generic alternatives would naturally have higher brand name percentages compared to those with the choice to prescribe generic alternatives.
