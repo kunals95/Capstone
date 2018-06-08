@@ -58,3 +58,15 @@
   height: 20px;
   display: block;
 }
+
+
+@media (max-width: 830px){
+.u-video,
+.u-video iframe {
+
+    max-width: 100%;
+    /* margin-right: 10px; */
+    width: auto;
+    height: auto;
+}
+}

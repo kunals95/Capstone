@@ -98,6 +98,18 @@
         <div class="title">
           <h2>Search Results</h2>
             <h4><a href="../"><i class="material-icons">search</i>New Search</a></h4>
+          </div>
+          <div class="alert alert-info">
+            <div class="container">
+              <div class="alert-icon">
+                <i class="material-icons">error_outline</i>
+              </div>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><i class="material-icons">clear</i></span>
+              </button>
+              <b>Please Note:</b> These results only include doctors who received payments for a minimum of 1 year AND wrote Medicare Part D prescriptions in that same year.
+            </div>
+          </div>
           <div>
             <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
             {{ output2|safe }}
@@ -105,7 +117,6 @@
         </div>
       </div>
     </div>
-  </div>
   <!-- Footer -->
   <footer class="footer" data-background-color="black">
     <div class="container">
